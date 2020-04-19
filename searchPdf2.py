@@ -1,7 +1,6 @@
 from PyPDF2 import utils
 import re
 import os, sys, subprocess
-from threading import Thread
 import PyPDF2
 
 def searchPdf(si,ch):
