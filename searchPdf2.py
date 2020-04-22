@@ -2,7 +2,7 @@ import PyPDF2
 import re
 import os
 from multiprocessing import Pool
-
+import time
 example = '/home/joe/PycharmProjects/PDFsearch'
 
 def find_pdfs(directory):
@@ -15,15 +15,20 @@ def find_pdfs(directory):
 
 def search_pdf(critera):
     search_term, path = critera
-    pdf = PyPDF2.PdfFileReader(path)
-    for n in range(0, pdf.getNumPages()):
-        page = pdf.getPage(n)
-        text = page.extractText().lower()
-        search = re.search(search_term, text)
-        if search != None:
-            print(path)
-            break
-
+    try:
+        pdf = PyPDF2.PdfFileReader(path)
+        try:
+            for n in range(0, pdf.getNumPages()):
+                page = pdf.getPage(n)
+                text = page.extractText().lower()
+                search = re.search(search_term, text)
+                if search != None:
+                    print(path)
+                    break
+        except:
+            print ('cannot extract text')
+    except:
+        print ('PDF file corrupt')
 
 
 term = input('Enter search word: ')
@@ -37,10 +42,12 @@ else:
     cho = '/media/raja/316E396D3C478D8A/pdrv/computer science/HSC/'
 
 pdfs = find_pdfs(cho)
-
+startTime= time.time()
 search_crit = []
 for pdf in pdfs:
     search_crit.append((term, pdf))
 
 with Pool(thread_count) as p:
         p.map(search_pdf, search_crit)
+dur = time.time() - startTime
+print (dur)
